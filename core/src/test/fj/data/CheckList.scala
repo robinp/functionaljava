@@ -4,11 +4,12 @@ package data
 import org.scalacheck.Prop._
 import ArbitraryList.arbitraryList
 import ArbitraryP.arbitraryP1
-import Equal.{listEqual, stringEqual, p2Equal}
+import Equal.{listEqual, stringEqual, p2Equal, intEqual}
 import P.p
 import Unit.unit
 import List.{nil, single, join, iterateWhile}
 import org.scalacheck.Properties
+import fj.function.Integers
 
 object CheckList extends Properties("List") {
   property("isEmpty") = forAll((a: List[Int]) =>
@@ -105,6 +106,12 @@ object CheckList extends Properties("List") {
     listEqual(stringEqual).eq(
       a.foldLeft(((a: List[String], b: String) => single(b).append(a)), nil[String]),
       a.reverse.foldRight((a: String, b: List[String]) => single(a).append(b), nil[String])))
+
+  property("foldMap") = forAll((a: List[String], s: String) => {
+    def g(s: String): java.lang.Integer = s.length
+    intEqual.eq(
+      a.map(g _).foldLeft[java.lang.Integer](Integers.add, 0),
+      a.foldMap(g _, Monoid.intAdditionMonoid))})
 
   property("length") = forAll((a: List[String]) =>
     a.length != 0 ==>

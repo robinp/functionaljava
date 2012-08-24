@@ -148,6 +148,19 @@ public abstract class List<A> implements Iterable<A> {
   }
 
   /**
+   * Provides a first-class version of toOption()
+   *
+   * @return The toOption function for lists.
+   */
+  public static <A> F<List<A>, Option<A>> toOption_() {
+    return new F<List<A>, Option<A>>() {
+      public Option<A> f(final List<A> as) {
+        return as.toOption();
+      }
+    };
+  }
+
+  /**
    * Returns an either projection of this list; the given argument in <code>Left</code> if empty, or
    * the first element in <code>Right</code>.
    *
@@ -692,6 +705,18 @@ public abstract class List<A> implements Iterable<A> {
     if (isEmpty())
       throw error("Undefined: foldLeft1 on empty list");
     return tail().foldLeft(f, head());
+  }
+
+  /**
+   * Maps each element of the list then folds the mapped elements using the
+   * monoid.
+   *
+   * @param f The function to apply for each element of the list.
+   * @param monoid The monoid to fold with.
+   * @return The result of the folding of the mapped elements.
+   */
+  public <B> B foldMap(final F<A, B> f, final Monoid<B> monoid) {
+    return monoid.sumLeft(map(f));
   }
 
   /**

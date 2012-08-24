@@ -497,6 +497,19 @@ public abstract class Set<A> implements Iterable<A> {
   }
 
   /**
+   * First-class version of iterableSet.
+   *
+   * @return The iterableSet function.
+   */
+  public static <A> F2<Ord<A>, Iterable<A>, Set<A>> iterableSet() {
+    return new F2<Ord<A>, Iterable<A>, Set<A>>() {
+      public Set<A> f(Ord<A> o, Iterable<A> as) {
+        return iterableSet(o, as);
+      }
+    };
+  }
+
+  /**
    * Constructs a set from the given elements.
    *
    * @param o  An order for the elements of the new set.
